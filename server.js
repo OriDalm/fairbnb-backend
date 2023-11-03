@@ -11,7 +11,6 @@ const server = http.createServer(app)
 app.use(cookieParser())
 app.use(express.json())
 
-
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve('public')))
 } else {
@@ -52,6 +51,7 @@ app.get('/**', (req, res) => {
 
 
 import { logger } from './services/logger.service.js'
+import { log } from 'console'
 const port = process.env.PORT || 3030
 server.listen(port, () => {
     logger.info('Server is running on port: ' + port)

@@ -7,11 +7,12 @@ const {ObjectId} = mongodb
 const PAGE_SIZE = 3
 
 
-async function query(filterBy={txt:''}) {
+async function query(filterBy) {
     try {
-        const criteria = {
-            country: { $regex: filterBy.txt, $options: 'i' }
-        }
+        console.log('test', filterBy);
+        // const criteria = {
+        //     country: { $regex: filterBy.txt, $options: 'i' }
+        // }
         const collection = await dbService.getCollection('stay')
         var stayCursor = await collection.find()
 
@@ -104,3 +105,7 @@ export const stayService = {
     // addStayMsg,
     // removeStayMsg
 }
+
+// function _buildCriteria(filterBy) {
+//     const 
+// }

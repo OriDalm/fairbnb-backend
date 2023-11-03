@@ -6,10 +6,10 @@ export async function getStays(req, res) {
     try {
         console.log('req query',req.query);
         logger.debug('Getting Stays:', req.query)
-        // const filterBy = {
-        //     country: req.query.loc.country || '',
-        // }
-        const stays = await stayService.query()
+        const filterBy = {
+            country: req.query.country || '',
+        }
+        const stays = await stayService.query(filterBy)
         res.json(stays)
     } catch (err) {
         logger.error('Failed to get stays', err)
