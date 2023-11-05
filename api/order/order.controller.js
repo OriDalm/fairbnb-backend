@@ -4,7 +4,7 @@ import { socketService } from '../../services/socket.service.js'
 
 export async function getOrders(req, res) {
     try {
-        console.log('req query',req.query);
+        // console.log('req query',req.query);
         logger.debug('Getting Orders:', req.query)
         const filterBy = {
             hostId: req.query.hostId || '',
@@ -22,7 +22,7 @@ export async function getOrderById(req, res) {
     try {
         const orderId = req.params.id
         const order = await stayService.getById(orderId)
-        console.log('order',order);
+        // console.log('order',order);
         res.json(order)
     } catch (err) {
         logger.error('Failed to get order', err)
@@ -37,7 +37,7 @@ export async function addOrder(req, res) {
         const order = req.body
         order.buyer = loggedinUser
         const addedOrder = await orderService.add(order)
-        socketService.emitToUser({ type: 'order-added', data: addedOrder, userId: loggedinUser._id })
+        socketService.emitToUser({ type: 'add-order', data: addedOrder, userId: loggedinUser._id })
         res.json(addedOrder)
     } catch (err) {
         logger.error('Failed to add order', err)
