@@ -47,6 +47,16 @@ export function setupSocketAPI(http) {
             delete socket.userId
         })
 
+
+        // socket.on(EVENTS.ORDER_ADD, order => {
+        //     const hostId = order.host._id
+        //     gIo.to(hostId).emit(EMITS.ORDER_ADDED, order)
+        // })
+
+        // Orders
+        socket.on('add-order', order => {
+            gIo.emit('added-order', order)
+        })
     })
 }
 
