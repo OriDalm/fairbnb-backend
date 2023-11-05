@@ -8,6 +8,12 @@ export async function getStays(req, res) {
         logger.debug('Getting Stays:', req.query)
         const filterBy = {
             country: req.query.country || '',
+            labels: req.query.labels || '',
+            type:req.query.type || '',
+            minPrice: +req.query.minPrice || '',
+            maxPrice: +req.query.maxPrice || '',
+            bedrooms: +req.query.bedrooms || '',
+            bathrooms: +req.query.bathrooms || '',
         }
         const stays = await stayService.query(filterBy)
         res.json(stays)

@@ -1,23 +1,21 @@
-import {dbService} from '../../services/db.service.js'
-import {logger} from '../../services/logger.service.js'
-import {utilService} from '../../services/util.service.js'
+import { dbService } from '../../services/db.service.js'
+import { logger } from '../../services/logger.service.js'
+import { utilService } from '../../services/util.service.js'
 import mongodb from 'mongodb'
-const {ObjectId} = mongodb
+const { ObjectId } = mongodb
 
 const PAGE_SIZE = 3
 
 
 async function query(filterBy) {
+    // console.log('BACKEND FILTER',filterBy);
     try {
-        console.log('test', filterBy);
-        // const criteria = {
-        //     country: { $regex: filterBy.txt, $options: 'i' }
-        // }
+        // console.log('test', filterBy);
+        const criteria = _buildCriteria(filterBy)
+        console.log('CRITERIA', criteria)
         const collection = await dbService.getCollection('stay')
-        var stayCursor = await collection.find()
-
-        const stays = stayCursor.toArray()
-        console.log('stays',stays);
+        const stays = await collection.find(criteria).toArray()
+        // console.log('stays',stays);
         return stays
     } catch (err) {
         logger.error('cannot find stays', err)
@@ -106,6 +104,35 @@ export const stayService = {
     // removeStayMsg
 }
 
-// function _buildCriteria(filterBy) {
-//     const 
-// }
+function _buildCriteria(filterBy) {
+    console.log(filterBy);
+    const { country, labels, type, bedrooms, bathrooms, minPrice, maxPrice, } = filterBy
+
+    const criteria = {}
+
+    if (country) {
+        criteria.name = { $regex: country, $options: 'i' }
+    }
+
+    if (type) {
+        criteria.type = { $regex: type, $options: 'i' }
+    }
+
+    if (labels) {
+        criteria.labels = { $regex: labels, $options: 'i' }
+    }
+
+    if (bedrooms) {
+        criteria.bedrooms = { $eq: bedrooms}
+    }
+
+    if (bathrooms) {
+        criteria.bathrooms = { $eq: bathrooms}
+    }
+
+    if (minPrice && maxPrice) {
+        criteria.price = { $gte: minPrice, $lte: maxPrice }
+    }
+
+    return criteria
+}
