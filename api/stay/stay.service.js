@@ -8,14 +8,12 @@ const PAGE_SIZE = 3
 
 
 async function query(filterBy) {
-    // console.log('BACKEND FILTER',filterBy);
     try {
-        // console.log('test', filterBy);
         const criteria = _buildCriteria(filterBy)
         console.log('CRITERIA', criteria)
         const collection = await dbService.getCollection('stay')
         const stays = await collection.find(criteria).toArray()
-        // console.log('stays',stays);
+        console.log('stays',stays);
         return stays
     } catch (err) {
         logger.error('cannot find stays', err)
@@ -107,11 +105,17 @@ export const stayService = {
 function _buildCriteria(filterBy) {
     console.log(filterBy);
     const { country, labels, type, bedrooms, bathrooms, minPrice, maxPrice, } = filterBy
-
-    const criteria = {}
+console.log(typeof country);
+    let criteria = {}
 
     if (country) {
-        criteria.name = { $regex: country, $options: 'i' }
+        // criteria['loc.city'] = {$regex: country}
+        criteria = {
+            $or: [
+              { 'loc.city': { $regex: country } },
+              { 'loc.country': { $regex: country } }
+            ]
+          };
     }
 
     if (type) {
@@ -123,16 +127,16 @@ function _buildCriteria(filterBy) {
     }
 
     if (bedrooms) {
-        criteria.bedrooms = { $eq: bedrooms}
+        criteria.bedrooms = bedrooms
     }
 
     if (bathrooms) {
-        criteria.bathrooms = { $eq: bathrooms}
+        criteria.bathrooms = bathrooms
     }
 
     if (minPrice && maxPrice) {
         criteria.price = { $gte: minPrice, $lte: maxPrice }
     }
-
+    console.log('CRITERIA', criteria);
     return criteria
 }
