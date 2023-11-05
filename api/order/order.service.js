@@ -4,7 +4,7 @@ import { utilService } from '../../services/util.service.js'
 import mongodb from 'mongodb'
 const { ObjectId } = mongodb
 
-export const stayService = {
+export const orderService = {
     remove,
     query,
     getById,

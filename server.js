@@ -31,6 +31,7 @@ if (process.env.NODE_ENV === 'production') {
 import { authRoutes } from './api/auth/auth.routes.js'
 import { userRoutes } from './api/user/user.routes.js'
 import { stayRoutes } from './api/stay/stay.routes.js'
+import { orderRoutes } from './api/order/order.routes.js'
 import { setupSocketAPI } from './services/socket.service.js'
 
 // routes
@@ -40,6 +41,7 @@ app.all('*', setupAsyncLocalStorage)
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/stay', stayRoutes)
+app.use('/api/order', orderRoutes)
 setupSocketAPI(server)
 
 // Make every server-side-route to match the index.html
