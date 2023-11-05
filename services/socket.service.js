@@ -35,7 +35,7 @@ export function setupSocketAPI(http) {
             socket.join('watching:' + userId)
 
         })
-        
+
 
         // Auth
         socket.on('set-user-socket', userId => {
@@ -54,8 +54,16 @@ export function setupSocketAPI(http) {
         // })
 
         // Orders
-        socket.on('add-order', order => {
-            gIo.emit('added-order', order)
+        // socket.on('add-order', order => {
+        //     gIo.emit('added-order', order)
+        // })
+        socket.on('add-order', (order) => {
+            logger.info(`New order from ${order.buyer._id}`)
+            emitToUser({
+                type: 'order-added',
+                data: order,
+                userId: order.hostId
+            })
         })
     })
 }
