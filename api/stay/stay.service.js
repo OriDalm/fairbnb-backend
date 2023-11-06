@@ -103,9 +103,9 @@ export const stayService = {
 }
 
 function _buildCriteria(filterBy) {
-    console.log(filterBy);
+    // console.log(filterBy);
     const { country, labels, type, bedrooms, bathrooms, minPrice, maxPrice, } = filterBy
-console.log(typeof country);
+// console.log(typeof country);
     let criteria = {}
 
     if (country) {
@@ -137,6 +137,6 @@ console.log(typeof country);
     if (minPrice && maxPrice) {
         criteria.price = { $gte: minPrice, $lte: maxPrice }
     }
-    console.log('CRITERIA', criteria);
+    // console.log('CRITERIA', criteria);
     return criteria
 }

@@ -4,6 +4,7 @@ import { Server } from 'socket.io'
 var gIo = null
 
 export function setupSocketAPI(http) {
+
     gIo = new Server(http, {
         cors: {
             origin: '*',
@@ -15,6 +16,7 @@ export function setupSocketAPI(http) {
             logger.info(`Socket disconnected [id: ${socket.id}]`)
         })
         socket.on('chat-set-topic', topic => {
+            console.log('TOPIC FROM SOCKET', topic);
             if (socket.myTopic === topic) return
             if (socket.myTopic) {
                 socket.leave(socket.myTopic)
@@ -28,6 +30,7 @@ export function setupSocketAPI(http) {
             // emits to all sockets:
             // gIo.emit('chat addMsg', msg)
             // emits only to sockets in the same room
+
             gIo.to(socket.myTopic).emit('chat-add-msg', msg)
         })
         socket.on('user-watch', userId => {
@@ -41,6 +44,7 @@ export function setupSocketAPI(http) {
         socket.on('set-user-socket', userId => {
             logger.info(`Setting socket.userId = ${userId} for socket [id: ${socket.id}]`)
             socket.userId = userId
+            console.log('socket.userId',socket.userId);
         })
         socket.on('unset-user-socket', () => {
             logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
@@ -76,7 +80,7 @@ function emitTo({ type, data, label }) {
 async function emitToUser({ type, data, userId }) {
     userId = userId.toString()
     const socket = await _getUserSocket(userId)
-
+    console.log('SOCKET', socket);
     if (socket) {
         logger.info(`Emiting event: ${type} to user: ${userId} socket [id: ${socket.id}]`)
         socket.emit(type, data)
@@ -109,7 +113,12 @@ async function broadcast({ type, data, room = null, userId }) {
 
 async function _getUserSocket(userId) {
     const sockets = await _getAllSockets()
-    const socket = sockets.find(s => s.userId === userId)
+    console.log('USER ID', userId);
+    const socket = sockets.find(s => {
+        console.log(s.userId);
+        s.userId === userId
+    })
+    console.log('FOUND SOCKET', socket);
     return socket
 }
 async function _getAllSockets() {
