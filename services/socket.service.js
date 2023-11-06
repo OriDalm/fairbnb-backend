@@ -32,6 +32,15 @@ export function setupSocketAPI(http) {
                 userId: order.hostId
             })
         })
+        socket.on('update-order', (order) => {
+            logger.info(`Updated order from ${order.hostId}`)
+            console.log("GET EMITTED YPDATE ORDER",order.buyer._id);
+            emitToUser({
+                type: 'order-updated',
+                data: order,
+                userId: order.buyer._id
+            })
+        })
     })
 }
 
@@ -41,6 +50,7 @@ function emitTo({ type, data, label }) {
 }
 
 async function emitToUser({ type, data, userId }) {
+    console.log('USER ID',userId);
     userId = userId.toString()
     const socket = await _getUserSocket(userId)
     if (socket) {

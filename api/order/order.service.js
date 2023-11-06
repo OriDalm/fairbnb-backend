@@ -80,7 +80,7 @@ function _buildCriteria(filterBy) {
     if (filterBy.hostId) {
         criteria['order.host'] = { $regex: filterBy.hostId }
     }
-    if (filterBy.buyerId) {
+    else if (filterBy.buyerId) {
         criteria['order.buyer'] = { $regex: filterBy.buyerId }
     }
     return criteria
