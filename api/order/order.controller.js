@@ -22,22 +22,19 @@ export async function getOrderById(req, res) {
     try {
         const orderId = req.params.id
         const order = await stayService.getById(orderId)
-        // console.log('order',order);
         res.json(order)
     } catch (err) {
         logger.error('Failed to get order', err)
         res.status(400).send({ err: 'Failed to get order' })
     }
-}
+}   
 
 export async function addOrder(req, res) {
     const { loggedinUser } = req
-
     try {
         const order = req.body
         order.buyer = loggedinUser
         const addedOrder = await orderService.add(order)
-        socketService.emitToUser({ type: 'add-order', data: addedOrder, userId: loggedinUser._id })
         res.json(addedOrder)
     } catch (err) {
         logger.error('Failed to add order', err)
