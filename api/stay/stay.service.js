@@ -10,10 +10,8 @@ const PAGE_SIZE = 3
 async function query(filterBy) {
     try {
         const criteria = _buildCriteria(filterBy)
-        console.log('CRITERIA', criteria)
         const collection = await dbService.getCollection('stay')
         const stays = await collection.find(criteria).toArray()
-        console.log('stays',stays);
         return stays
     } catch (err) {
         logger.error('cannot find stays', err)
@@ -137,6 +135,5 @@ console.log(typeof country);
     if (minPrice && maxPrice) {
         criteria.price = { $gte: minPrice, $lte: maxPrice }
     }
-    console.log('CRITERIA', criteria);
     return criteria
 }

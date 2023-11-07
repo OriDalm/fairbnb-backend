@@ -4,7 +4,6 @@ import { socketService } from '../../services/socket.service.js'
 
 export async function getStays(req, res) {
     try {
-        console.log('req query',req.query);
         logger.debug('Getting Stays:', req.query)
         const filterBy = {
             country: req.query.country || '',
@@ -27,7 +26,6 @@ export async function getStayById(req, res) {
     try {
         const stayId = req.params.id
         const stay = await stayService.getById(stayId)
-        console.log('stay',stay);
         res.json(stay)
     } catch (err) {
         logger.error('Failed to get stay', err)
