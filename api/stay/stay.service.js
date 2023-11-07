@@ -141,6 +141,6 @@ function _buildCriteria(filterBy) {
     if (minPrice && maxPrice) {
         criteria.price = { $gte: minPrice, $lte: maxPrice }
     }
-    // console.log('CRITERIA', criteria);
+    console.log('CRITERIA', criteria);
     return criteria
 }
