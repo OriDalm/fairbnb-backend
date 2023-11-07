@@ -10,6 +10,7 @@ export async function getStays(req, res) {
             country: req.query.country || '',
             labels: req.query.labels || '',
             type:req.query.type || '',
+            roomType:req.query.roomType || '',
             minPrice: +req.query.minPrice || '',
             maxPrice: +req.query.maxPrice || '',
             bedrooms: +req.query.bedrooms || '',

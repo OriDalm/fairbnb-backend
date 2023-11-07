@@ -104,7 +104,7 @@ export const stayService = {
 
 function _buildCriteria(filterBy) {
     // console.log(filterBy);
-    const { country, labels, type, bedrooms, bathrooms, minPrice, maxPrice, } = filterBy
+    const { country, labels, type,roomType, bedrooms, bathrooms, minPrice, maxPrice, } = filterBy
 // console.log(typeof country);
     let criteria = {}
 
@@ -120,6 +120,10 @@ function _buildCriteria(filterBy) {
 
     if (type) {
         criteria.type = { $regex: type, $options: 'i' }
+    }
+
+    if (roomType) {
+        criteria.roomType = { $regex: roomType, $options: 'i' }
     }
 
     if (labels) {
