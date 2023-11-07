@@ -10,8 +10,10 @@ const PAGE_SIZE = 3
 async function query(filterBy) {
     try {
         const criteria = _buildCriteria(filterBy)
+        // console.log('CRITERIA', criteria)
         const collection = await dbService.getCollection('stay')
         const stays = await collection.find(criteria).toArray()
+        // console.log('stays',stays);
         return stays
     } catch (err) {
         logger.error('cannot find stays', err)
@@ -101,9 +103,9 @@ export const stayService = {
 }
 
 function _buildCriteria(filterBy) {
-    console.log(filterBy);
-    const { country, labels, type, bedrooms, bathrooms, minPrice, maxPrice, } = filterBy
-console.log(typeof country);
+    // console.log(filterBy);
+    const { country, labels, type,roomType, bedrooms, bathrooms, minPrice, maxPrice, } = filterBy
+// console.log(typeof country);
     let criteria = {}
 
     if (country) {
@@ -118,6 +120,10 @@ console.log(typeof country);
 
     if (type) {
         criteria.type = { $regex: type, $options: 'i' }
+    }
+
+    if (roomType) {
+        criteria.roomType = { $regex: roomType, $options: 'i' }
     }
 
     if (labels) {

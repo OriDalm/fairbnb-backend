@@ -4,6 +4,7 @@ import { Server } from 'socket.io'
 var gIo = null
 
 export function setupSocketAPI(http) {
+
     gIo = new Server(http, {
         cors: {
             origin: '*',
@@ -12,31 +13,8 @@ export function setupSocketAPI(http) {
     gIo.on('connection', socket => {
         logger.info(`New connected socket [id: ${socket.id}]`)
         socket.on('disconnect', socket => {
-            logger.info(`Socket disconnected [id: ${socket.id}]`)
+            logger.info(`Socket disconnected [id: ${socket.id},socket.userId:${socket.userId}]`)
         })
-        socket.on('chat-set-topic', topic => {
-            if (socket.myTopic === topic) return
-            if (socket.myTopic) {
-                socket.leave(socket.myTopic)
-                logger.info(`Socket is leaving topic ${socket.myTopic} [id: ${socket.id}]`)
-            }
-            socket.join(topic)
-            socket.myTopic = topic
-        })
-        socket.on('chat-send-msg', msg => {
-            logger.info(`New chat msg from socket [id: ${socket.id}], emitting to topic ${socket.myTopic}`)
-            // emits to all sockets:
-            // gIo.emit('chat addMsg', msg)
-            // emits only to sockets in the same room
-            gIo.to(socket.myTopic).emit('chat-add-msg', msg)
-        })
-        socket.on('user-watch', userId => {
-            logger.info(`user-watch from socket [id: ${socket.id}], on user ${userId}`)
-            socket.join('watching:' + userId)
-
-        })
-        
-
         // Auth
         socket.on('set-user-socket', userId => {
             logger.info(`Setting socket.userId = ${userId} for socket [id: ${socket.id}]`)
@@ -46,16 +24,22 @@ export function setupSocketAPI(http) {
             logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
             delete socket.userId
         })
-
-
-        // socket.on(EVENTS.ORDER_ADD, order => {
-        //     const hostId = order.host._id
-        //     gIo.to(hostId).emit(EMITS.ORDER_ADDED, order)
-        // })
-
-        // Orders
-        socket.on('add-order', order => {
-            gIo.emit('added-order', order)
+        socket.on('add-order', (order) => {
+            logger.info(`New order from ${order.buyer._id}`)
+            emitToUser({
+                type: 'order-added',
+                data: order,
+                userId: order.hostId
+            })
+        })
+        socket.on('update-order', (order) => {
+            logger.info(`Updated order from ${order.hostId}`)
+            console.log("GET EMITTED YPDATE ORDER",order.buyer._id);
+            emitToUser({
+                type: 'order-updated',
+                data: order,
+                userId: order.buyer._id
+            })
         })
     })
 }
@@ -66,9 +50,9 @@ function emitTo({ type, data, label }) {
 }
 
 async function emitToUser({ type, data, userId }) {
+    console.log('USER ID',userId);
     userId = userId.toString()
     const socket = await _getUserSocket(userId)
-
     if (socket) {
         logger.info(`Emiting event: ${type} to user: ${userId} socket [id: ${socket.id}]`)
         socket.emit(type, data)
@@ -101,7 +85,9 @@ async function broadcast({ type, data, room = null, userId }) {
 
 async function _getUserSocket(userId) {
     const sockets = await _getAllSockets()
-    const socket = sockets.find(s => s.userId === userId)
+    const socket = sockets.find(s => {
+        return s.userId === userId
+    })
     return socket
 }
 async function _getAllSockets() {
@@ -112,11 +98,9 @@ async function _getAllSockets() {
 
 async function _printSockets() {
     const sockets = await _getAllSockets()
-    console.log(`Sockets: (count: ${sockets.length}):`)
     sockets.forEach(_printSocket)
 }
 function _printSocket(socket) {
-    console.log(`Socket - socketId: ${socket.id} userId: ${socket.userId}`)
 }
 
 export const socketService = {

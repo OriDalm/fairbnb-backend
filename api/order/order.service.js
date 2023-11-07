@@ -18,7 +18,7 @@ async function query(filterBy) {
     try {
         const criteria = _buildCriteria(filterBy)
         const collection = await dbService.getCollection('order')
-        const orders = await collection.find(criteria).toArray()
+        const orders = await collection.find(criteria).sort({_id:-1}).toArray()
         return orders
     } catch (err) {
         logger.error('cannot find orders', err)
@@ -50,6 +50,7 @@ async function remove(orderId) {
 
 async function add(order) {
     try {
+        order.createdAt = Date.now()
         const collection = await dbService.getCollection('order')
         await collection.insertOne(order)
         return order
@@ -61,10 +62,13 @@ async function add(order) {
 
 async function update(order) {
     try {
-        const orderToSave = {...order,status:order.status}
+        const id = order._id
+        delete order._id
         const collection = await dbService.getCollection('order')
-        await collection.updateOne({ _id: ObjectId(order._id) }, { $set: orderToSave })
+        await collection.updateOne({ _id: ObjectId(id) }, { $set: order })
+        order._id = id
         return order
+
     } catch (err) {
         logger.error(`cannot update order ${orderId}`, err)
         throw err
@@ -73,11 +77,11 @@ async function update(order) {
 
 function _buildCriteria(filterBy) {
     const criteria = {}
-    if(filterBy.hostId){
-        criteria['order.host'] = {$regex: filterBy.hostId}
+    if (filterBy.hostId) {
+        criteria['order.host'] = { $regex: filterBy.hostId }
     }
-    if(filterBy.buyerId){
-        criteria['order.buyer'] = {$regex: filterBy.buyerId}
+    else if (filterBy.buyerId) {
+        criteria['order.buyer'] = { $regex: filterBy.buyerId }
     }
     return criteria
 }
