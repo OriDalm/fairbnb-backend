@@ -40,7 +40,7 @@ export function setupSocketAPI(http) {
                 userId: order.buyer._id
             })
             emitToUser({
-                type: 'order-updated',
+                type: 'order-status-updated',
                 data: order,
                 userId: order.hostId
             })
