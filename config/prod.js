@@ -4,5 +4,5 @@ dotenv.config()
 const password = process.env.SECRET 
 export default  {
   dbURL:`mongodb+srv://oridalm:${password}@fairbnb.yw2ugh3.mongodb.net/?retryWrites=true&w=majority`,
-  dbName : 'league_db'
+  dbName : 'stay_db'
 }
