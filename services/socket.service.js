@@ -34,11 +34,15 @@ export function setupSocketAPI(http) {
         })
         socket.on('update-order', (order) => {
             logger.info(`Updated order from ${order.hostId}`)
-            console.log("GET EMITTED YPDATE ORDER",order.buyer._id);
             emitToUser({
                 type: 'order-updated',
                 data: order,
                 userId: order.buyer._id
+            })
+            emitToUser({
+                type: 'order-status-updated',
+                data: order,
+                userId: order.hostId
             })
         })
     })
